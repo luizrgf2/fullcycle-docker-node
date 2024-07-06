@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=testdb
+    networks:
+      - fullcycle
+  app:
+    restart: always
+    build: 
+      dockerfile: dockerfile.app
+    networks:
+      - fullcycle
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+  
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+    networks:
+      - fullcycle
+    volumes:
+      - ./nginx:/etc/nginx/
+    
+networks:
+  fullcycle:
+    driver: bridge
+    
